@@ -2,6 +2,7 @@ import { useFilter } from "../../reduxHooks/filterHook";
 
 export const Filter = () => {
   const { filter, onChangeFilter } = useFilter();
+
   return (
     <label>
       Contacts Filter

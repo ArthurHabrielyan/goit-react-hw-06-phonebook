@@ -1,37 +1,26 @@
 import { ContactListItem } from "./ContactListItem";
-import { useContacts } from "../../reduxHooks/contactsHook";
+import { useGetContactsQuery } from "../../redux/contact-reducer/contacts";
 import { useFilter } from "../../reduxHooks/filterHook";
-
+import { useMemo } from "react";
 export const ContactList = () => {
-  const { contacts, deleteContact } = useContacts();
+  const { data: contacts } = useGetContactsQuery();
   const { filter } = useFilter();
 
-  const getVisibleContacts = () => {
-    const toLowerCaseContacts = filter.toLocaleLowerCase();
-    if (!contacts) {
-      return;
-    }
-
-    return contacts.filter((contact) =>
-      contact.name.toLocaleLowerCase().includes(toLowerCaseContacts)
+  const filteredContacts = useMemo(() => {
+    return (
+      contacts?.filter((contact) =>
+        contact.name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+      ) ?? []
     );
-  };
-
-  const filterContacts = getVisibleContacts();
+  }, [filter, contacts]);
 
   return (
     <div>
       <ul>
-        {filterContacts.length > 0 &&
-          filterContacts.map(({ name, number, id }) => {
+        {filteredContacts &&
+          filteredContacts.map(({ name, phone, id }) => {
             return (
-              <ContactListItem
-                name={name}
-                number={number}
-                key={id}
-                id={id}
-                deleteContact={deleteContact}
-              />
+              <ContactListItem name={name} number={phone} key={id} id={id} />
             );
           })}
       </ul>
